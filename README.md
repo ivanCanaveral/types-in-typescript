@@ -60,3 +60,100 @@ class superPet {
 ```
 
 :exclamation: There are some read-only types, like `ReadOnlyArray<T>`, that gives you a non-mutable array that expose non-destructive methods only.
+
+## never and void
+
+The type of a function that never ends is `void`. However the type of a variable that is assigned in an unrecheable piece of code is `never`.
+
+In the following example, the type of `unreachableVar` will be inferred as `never`:
+```typescript
+const unreachableVar = function() {
+    while(true) {
+        ...
+    }
+};
+```
+(!) `function()` is the same as *arrow functions* `()=>{}`
+
+However, in this example, `unreachableVar` will be typed as `void`:
+```typescript
+function endless() {
+    while(true) {
+        ...
+    }
+};
+
+const unreachableVar = endless();
+```
+
+`void` type is the type of functions that not returns anything:
+```typescript
+function hi(): void {
+    console.log('hi!');
+}
+```
+
+## enumerate types
+
+In typescript we can also define new enumerate types:
+
+```typescript
+enum FuzzyPet {
+    dog,
+    cat,
+    hamster
+};
+```
+
+### tip: using `never` type in switch statements
+
+In this case, if out patterns are non exhaustive, the compiler will throw an error:
+
+```typescript
+enum FuzzyPet {
+    dog,
+    cat,
+    hamster
+};
+
+function assertNever(anyValue: never) {
+    throw Error(`Ups! You forgot a case: '${anyValue}'`);
+};
+
+function talk(myPet: FuzzyPet) {
+    switch (myPet) {
+        case FuzzyPet.dog: return "Guau!";
+        case FuzzyPet.cat: return "Miau!";
+        case FuzzyPet.hamster: return "sss!";
+        default: return assertNever(myPet);
+    }
+};
+```
+
+## type overload
+
+Look at this function:
+
+```typescript
+function duplicate<T>(element: T | string): T[] | string{
+    if (typeof element === 'string') {
+        return element + element;
+    }
+    return [element, element]
+};
+```
+
+It takes a `string` or a generic type `T`, and returns a `string` or an array of type `T`. This means that, if I give it a `string`, the compiler won't asume that the result will be a `string`. The compiler is going to expect something of type `string` or `T`. To fix this, we can use the **overload** feature of typescript as follows:
+
+```typescript
+function duplicate(element: string): string;
+function duplicate<T>(element: T): T[];
+function duplicate<T>(element: T | string): T[] | string {
+    if (typeof element === 'string') {
+        return element + element;
+    }
+    return [element, element]
+};
+```
+
+This way, if we use a `string` as input, the compiler will expect a `string` as output.
