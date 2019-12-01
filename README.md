@@ -157,3 +157,51 @@ function duplicate<T>(element: T | string): T[] | string {
 ```
 
 This way, if we use a `string` as input, the compiler will expect a `string` as output.
+
+## string and numeric enums
+
+We can create enums with string members:
+
+```typescript
+enum myEndpoints = {
+    Endpoint1 = "localhost:3000",
+    Endpoint2 = "localhost:3001"
+}
+```
+
+An now we can reference the enum type, and get the string value:
+
+```typescript
+console.log(myEndpoints.EndPont1);
+
+>>> localhost:3000
+```
+The same for numbers
+
+```typescript
+enum numbers = {
+    BIGNUMBER = 999999,
+    ZERO = 0
+}
+```
+
+:exclamation: We can define ours `enums` as constants. Constants enums are directly turns in a simple substitution when the code is transpiled. This way we can get lighter code. In fact, there is an option in the tsconfig to always build `enum`s as `const`:
+
+```json
+{
+    "compilerOptions": {
+        ...
+        "preserveConstEnums": true
+    }
+}
+```
+
+## literal types
+
+### string literal types
+
+```typescript
+let movement: "up" | "down" | "left" | "right" = "up";
+movement = "down"; // Ok ;)
+movement = "other-thing" // compile error
+```
